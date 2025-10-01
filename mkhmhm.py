@@ -6,7 +6,7 @@
 # establishing convergence to an exact solution.
 
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 
 k      = 1.0 # Spring constant
 m      = 1.0 # Mass
@@ -20,10 +20,10 @@ def leapfrog( steps ):
        global space.
     """
     omega = (k/m)**0.5
-    delta = 2.0*cycles*numpy.pi/omega/steps
-    x     = numpy.empty( steps+1 )
-    v     = numpy.empty( steps+1 )
-    t     = numpy.empty( steps+1 )
+    delta = 2.0*cycles*np.pi/omega/steps
+    x     = np.empty( steps+1 )
+    v     = np.empty( steps+1 )
+    t     = np.empty( steps+1 )
     t[0]  = 0.0
     x[0]  = x0
     v[0]  = v0 + 0.5*delta*x[0]*omega**2.0
@@ -40,7 +40,7 @@ def l2_error_norm( t , x ):
     l2_err = 0.0
     l2     = 0.0
     for i in range(steps):
-        x_exact = x0*numpy.cos( omega*t[i] )
+        x_exact = x0*np.cos( omega*t[i] )
         l2_err += (x[i] - x_exact)**2.0
         l2     += x[i]**2.0
     return (l2_err/l2)**0.5
@@ -54,8 +54,8 @@ plt.switch_backend( 'TkAgg' )
 # number of steps (doubling at each loop iteration).
 n        = 14
 steps    = 8
-l2_error = numpy.empty( n )
-delta    = numpy.empty( n )
+l2_error = np.empty( n )
+delta    = np.empty( n )
 for i in range(0,n):
     t, x, v     = leapfrog( steps )
     delta[i]    = (k/m)**0.5*(t[1]-t[0])
