@@ -13,6 +13,7 @@ m      = 1.0 # Mass
 cycles = 2.0 # No. of periods to integrate over
 x0     = 1.0 # Initial displacement
 v0     = 0.0 # Initial velocity
+alpha = 0.1 #nonlinear spring parameter (alpha = 0 will be for pure SMH)
 
 def leapfrog( steps ):
     """Solve the simple harmonic motion equations for several oscillation cycles,
@@ -26,6 +27,8 @@ def leapfrog( steps ):
     t     = np.empty( steps+1 )
     t[0]  = 0.0
     x[0]  = x0
+    #Initial half-step velocity
+    a0 = (-k * x[0] - alpha * x[0]**3) / m
     v[0]  = v0 + 0.5*delta*x[0]*omega**2.0
     for i in range(steps):
         t[i+1] = t[i] + delta
