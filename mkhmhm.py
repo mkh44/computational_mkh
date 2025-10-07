@@ -55,7 +55,7 @@ def l2_error_norm( t , x ):
 # The backend choice here may be platform dependent. You may need to
 # change 'TkAgg' to something else (or omit this line entirely).
 
-#plt.switch_backend( 'TkAgg' )
+plt.switch_backend( 'TkAgg' )
 
 # This loop integrates the SHM equations repeatedly using an increasing
 # number of steps (doubling at each loop iteration).
