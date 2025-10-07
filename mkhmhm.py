@@ -15,13 +15,14 @@ cycles = 2.0 # No. of periods to integrate over
 x0     = 1.0 # Initial displacement
 v0     = 0.0 # Initial velocity
 alpha = 0.0 #nonlinear spring parameter (alpha = 0 will be for pure SMH)
+omega = (k/m)**0.5
 
 def leapfrog( steps ):
     """Solve the simple harmonic motion equations for several oscillation cycles,
        assuming that the mass (m) and spring constant (k) are defined in the
        global space.
     """
-    omega = (k/m)**0.5
+
     delta = 2.0*cycles*np.pi/omega/steps
     x     = np.empty( steps+1 )
     v     = np.empty( steps+1 )
@@ -44,7 +45,6 @@ def leapfrog( steps ):
 def l2_error_norm( t , x ):
     """Calculate the L2 relative error norm."""
     steps  = len( x ) - 1
-    omega  = (k/m)**0.5
     l2_err = 0.0
     l2     = 0.0
     for i in range(len(x)):
@@ -73,9 +73,19 @@ for i in range(n):
     plt.ylabel("x(t)")
     plt.xlabel("t")
     plt.legend(loc = "best")
-
     #plt.show( block=False )
     steps *= 2
+
+#overlaying exact solution on to fig 1
+t_dense = np.linspace(0, 2.0*cycles*np.pi/omega, 1000)
+x_exact = x0 * np.cos(omega * t_dense)
+plt.plot(t_dense, x_exact, 'k--', linewidth=2, label='Exact solution')
+plt.xlabel("t")
+plt.ylabel("x(t)")
+plt.title("Numerical solutions vs manufactured exact solution")
+plt.legend(fontsize=8)
+plt.grid(True, linestyle=':')
+plt.tight_layout()
 
 # Switch to a new plotting window, and plot the L2 error norm,
 # with guidelines for first, second, and third order accuracy.
