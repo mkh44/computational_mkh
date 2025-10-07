@@ -69,13 +69,15 @@ for i in range(n):
     delta[i]    = (k/m)**0.5*(t[1]-t[0])
     l2_error[i] = l2_error_norm( t , x )
     plt.plot( t, x, label=f"steps={steps}")
+    plt.ylabel("x(t)")
+    plt.xlabel("t")
     #plt.show( block=False )
     steps *= 2
 
 # Switch to a new plotting window, and plot the L2 error norm,
 # with guidelines for first, second, and third order accuracy.
 plt.figure()
-plt.loglog( delta , l2_error , 'o' )
+plt.loglog( delta , l2_error , 'o', label="L2 Error numerical results" )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**1.0, label='1st order accuracy' )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**2.0, label='2nd order accuracy' )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**3.0, label='3rd order accuracy' )
