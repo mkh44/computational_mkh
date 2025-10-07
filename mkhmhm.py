@@ -41,11 +41,11 @@ def leapfrog( steps ):
 
 def l2_error_norm( t , x ):
     """Calculate the L2 relative error norm."""
-    steps  = 64 #len( x ) - 1
+    steps  = len( x ) - 1
     omega  = (k/m)**0.5
     l2_err = 0.0
     l2     = 0.0
-    for i in range(steps):
+    for i in range(len(x)):
         x_exact = x0*np.cos( omega*t[i] )
         l2_err += (x[i] - x_exact)**2.0
         l2     += x[i]**2.0
