@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from stringprep import b1_set
 
 # PHY1063 Computational Physics
 #
@@ -71,6 +72,8 @@ for i in range(n):
     plt.plot( t, x, label=f"steps={steps}")
     plt.ylabel("x(t)")
     plt.xlabel("t")
+    plt.legend(loc = "best")
+
     #plt.show( block=False )
     steps *= 2
 
