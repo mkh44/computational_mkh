@@ -13,7 +13,7 @@ m      = 1.0 # Mass
 cycles = 2.0 # No. of periods to integrate over
 x0     = 1.0 # Initial displacement
 v0     = 0.0 # Initial velocity
-alpha = 0.1 #nonlinear spring parameter (alpha = 0 will be for pure SMH)
+alpha = 0.01 #nonlinear spring parameter (alpha = 0 will be for pure SMH)
 
 def leapfrog( steps ):
     """Solve the simple harmonic motion equations for several oscillation cycles,
@@ -41,7 +41,7 @@ def leapfrog( steps ):
 
 def l2_error_norm( t , x ):
     """Calculate the L2 relative error norm."""
-    steps  = len( x ) - 1
+    steps  = 64 #len( x ) - 1
     omega  = (k/m)**0.5
     l2_err = 0.0
     l2     = 0.0
