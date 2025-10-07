@@ -59,7 +59,7 @@ plt.switch_backend( 'TkAgg' )
 # This loop integrates the SHM equations repeatedly using an increasing
 # number of steps (doubling at each loop iteration).
 n        = 14
-steps    = 8
+steps    = 64
 l2_error = np.empty( n )
 delta    = np.empty( n )
 
