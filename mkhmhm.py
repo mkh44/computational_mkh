@@ -29,12 +29,15 @@ def leapfrog( steps ):
     x[0]  = x0
     #Initial half-step velocity
     a0 = (-k * x[0] - alpha * x[0]**3) / m
-    v[0]  = v0 + 0.5*delta*x[0]*omega**2.0
+    v[0]  = v0 + 0.5 * delta * a0
+
     for i in range(steps):
+        #Acceleration from modified force law
+        a = (-k * x[i] - alpha * x[i]**3) / m
         t[i+1] = t[i] + delta
-        v[i+1] = v[i] - omega**2*delta*x[i]
+        v[i+1] = v[i] + delta * a
         x[i+1] = x[i] + delta*v[i+1]
-    return t, x, v
+        return t, x, v
 
 def l2_error_norm( t , x ):
     """Calculate the L2 relative error norm."""
@@ -59,11 +62,12 @@ n        = 14
 steps    = 8
 l2_error = np.empty( n )
 delta    = np.empty( n )
-for i in range(0,n):
+
+for i in range(n):
     t, x, v     = leapfrog( steps )
     delta[i]    = (k/m)**0.5*(t[1]-t[0])
     l2_error[i] = l2_error_norm( t , x )
-    plt.plot( t , x )
+    plt.plot( t, x, label=f"steps={steps}")
     #plt.show( block=False )
     steps *= 2
 
@@ -74,7 +78,7 @@ plt.loglog( delta , l2_error , 'o' )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**1.0, label='1st order accuracy' )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**2.0, label='2nd order accuracy' )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**3.0, label='3rd order accuracy' )
-plt.xlabel('Time')
+plt.xlabel('Δt x ω')
 plt.ylabel('Relative Error Norm')
 plt.legend()
 plt.show()
