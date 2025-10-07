@@ -33,11 +33,12 @@ def leapfrog( steps ):
 
     for i in range(steps):
         #Acceleration from modified force law
-        a = (-k * x[i] - alpha * x[i]**3) / m
+        #a = (-k * x[i] - alpha * x[i]**3) / m
+        a = (-k * x[i] - alpha * x[i] ** 3) / m
+        v[i + 1] = v[i] + delta * a
         t[i+1] = t[i] + delta
-        v[i+1] = v[i] + delta * a
         x[i+1] = x[i] + delta*v[i+1]
-        return t, x, v
+    return t, x, v
 
 def l2_error_norm( t , x ):
     """Calculate the L2 relative error norm."""
@@ -54,12 +55,12 @@ def l2_error_norm( t , x ):
 # The backend choice here may be platform dependent. You may need to
 # change 'TkAgg' to something else (or omit this line entirely).
 
-plt.switch_backend( 'TkAgg' )
+#plt.switch_backend( 'TkAgg' )
 
 # This loop integrates the SHM equations repeatedly using an increasing
 # number of steps (doubling at each loop iteration).
 n        = 14
-steps    = 64
+steps    = 8
 l2_error = np.empty( n )
 delta    = np.empty( n )
 
