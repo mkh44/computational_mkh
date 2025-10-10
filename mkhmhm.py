@@ -67,7 +67,7 @@ delta    = np.empty( n )
 
 for i in range(n):
     t, x, v     = leapfrog( steps )
-    delta[i]    = (k/m)**0.5*(t[1]-t[0])
+    delta[i]    = omega*(t[1]-t[0])
     l2_error[i] = l2_error_norm( t , x )
     plt.plot( t, x, label=f"steps={steps}")
     plt.ylabel("x(t)")
@@ -94,7 +94,20 @@ plt.loglog( delta , l2_error , 'o', label="L2 Error numerical results" )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**1.0, label='1st order accuracy' )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**2.0, label='2nd order accuracy' )
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**3.0, label='3rd order accuracy' )
+
+#calculating convergence rate (slope of log.log)
+fine_region = slice(-5, None) #using smallest dt values for better acuracy
+fit = np.polyfit(np.log(delta[fine_region]), np.log(l2_error[fine_region]), 1)
+slope = fit[0]
+
+fit_line = np.exp(fit[1]) *delta**slope
+plt.loglog(delta, fit_line, '--', label=f'Fitted slope = {slope:2f}')
+
+
 plt.xlabel('Δt x ω')
 plt.ylabel('Relative Error Norm')
 plt.legend()
+plt.grid(True, linestyle=':')
+plt.tight_layout()
+
 plt.show()
