@@ -36,10 +36,12 @@ def leapfrog( steps ):
     for i in range(steps):
         #Acceleration from modified force law
         #a = (-k * x[i] - alpha * x[i]**3) / m
-        a = (-k * x[i] - alpha * x[i] ** 3) / m
-        v[i + 1] = v[i] + delta * a
-        t[i+1] = t[i] + delta
-        x[i+1] = x[i] + delta*v[i+1]
+        a = (-k * x[i] - alpha * x[i]** 3) / m
+
+        x[i+1] = x[i] + delta *v[i]
+        t[i + 1] = t[i] + delta
+        a_new = (-k * x[i+1] - alpha * x[i+1]**3) / m
+        v[i + 1] = v[i] + delta * a_new
     return t, x, v
 
 def l2_error_norm(t, x):
@@ -98,12 +100,12 @@ plt.loglog( delta , l2_error[0]*(delta/delta[0])**2.0, label='2nd order accuracy
 plt.loglog( delta , l2_error[0]*(delta/delta[0])**3.0, label='3rd order accuracy' )
 
 #calculating convergence rate (slope of log.log)
-fine_region = slice(-14, None) #using smallest dt values for better acuracy
+fine_region = slice(-5, None) #using smallest dt values for better acuracy
 fit = np.polyfit(np.log(delta[fine_region]), np.log(l2_error[fine_region]), 1)
 slope = fit[0]
 
 fit_line = np.exp(fit[1]) *delta**slope
-plt.loglog(delta, fit_line, '--', label=f'Fitted slope = {slope:3f}')
+plt.loglog(delta, fit_line, '--', label=f'Fitted slope = {slope:6f}')
 
 
 plt.xlabel('Δt x ω')
