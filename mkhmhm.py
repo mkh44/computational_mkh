@@ -11,11 +11,19 @@ import numpy as np
 
 k      = 1.0 # Spring constant
 m      = 1.0 # Mass
-cycles = 2.0 # No. of periods to integrate over
+cycles = 20 # No. of periods to integrate over
 x0     = 1.0 # Initial displacement
 v0     = 0.0 # Initial velocity
-alpha = 0.0 #nonlinear spring parameter (alpha = 0 will be for pure SMH)
+alpha = 0.1 #nonlinear spring parameter (alpha = 0 will be for pure SMH)
 omega = (k/m)**0.5
+
+# Special case variables
+target_omega_delta = 0.4
+total_time = 2.0 * cycles * np.pi / omega
+delta = target_omega_delta / omega
+steps = int(round(total_time/delta))
+delta = total_time/steps
+print(f"Steps = {steps}, delta = {delta:.6e}, omega*delta = {omega*delta:.6f}")
 
 def leapfrog( steps ):
     """Solve the simple harmonic motion equations for several oscillation cycles,
@@ -23,7 +31,7 @@ def leapfrog( steps ):
        global space.
     """
 
-    delta = (2.0*cycles*np.pi/omega)/steps
+    #delta = (2.0*cycles*np.pi/omega)/steps
     x     = np.empty( steps+1 )
     v     = np.empty( steps+1 )
     t     = np.empty( steps+1 )
