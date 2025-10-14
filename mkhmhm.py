@@ -22,7 +22,7 @@ target_omega_delta = 0.4
 total_time = 2.0 * cycles * np.pi / omega
 delta = target_omega_delta / omega
 steps = int(round(total_time/delta))
-delta = total_time/steps
+#delta = total_time/steps
 print(f"Steps = {steps}, delta = {delta:.6e}, omega*delta = {omega*delta:.6f}")
 
 def leapfrog_nonlinear(steps):
@@ -151,15 +151,15 @@ for i in range(n):
 
 
 #overlaying exact solution on to fig 1
-t_dense = np.linspace(0, 2.0*cycles*np.pi/omega, 1000)
-x_exact = x0 * np.cos(omega * t_dense)
-plt.plot(t_dense, x_exact, 'k--', linewidth=2, label='Exact solution')
-plt.xlabel("t")
-plt.ylabel("x(t)")
-#plt.title("Numerical solutions vs manufactured exact solution")
-plt.legend(fontsize=8)
-plt.grid(True)
-plt.tight_layout()
+# t_dense = np.linspace(0, 2.0*cycles*np.pi/omega, 1000)
+# x_exact = x0 * np.cos(omega * t_dense)
+# plt.plot(t_dense, x_exact, 'k--', linewidth=2, label='Exact solution')
+# plt.xlabel("t")
+# plt.ylabel("x(t)")
+# #plt.title("Numerical solutions vs manufactured exact solution")
+# plt.legend(fontsize=8)
+# plt.grid(True)
+# plt.tight_layout()
 
 # Switch to a new plotting window, and plot the L2 error norm,
 # with guidelines for first, second, and third order accuracy.
