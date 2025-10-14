@@ -11,7 +11,7 @@ import numpy as np
 
 k      = 1.0 # Spring constant
 m      = 1.0 # Mass
-cycles = 20 # No. of periods to integrate over
+cycles = 1 # No. of periods to integrate over
 x0     = 1.0 # Initial displacement
 v0     = 0.0 # Initial velocity
 alpha = 0.1 #nonlinear spring parameter (alpha = 0 will be for pure SMH)
@@ -39,7 +39,7 @@ def leapfrog_nonlinear(steps):
 
     for i in range(steps):
         #advancing position by full step using half-step vel
-        a = (-k * x[i] - alpha * x[i]**3)/m
+        #a = (-k * x[i] - alpha * x[i]**3)/m
         x[i+1] = x[i] + delta * v[i]
         t[i+1] = t[i] + delta
 
@@ -47,14 +47,14 @@ def leapfrog_nonlinear(steps):
         a_new = (-k * x[i+1] - alpha * x[i+1]**3)/m
         v[i + 1] = v[i] + delta * a_new
 
-        v = np.empty( steps + 1 )
+     # endpoints
+    v[0] = (x[1] - x[0]) / delta
+    v[-1] = (x[-1] - x[-2]) / delta
+    return t, x, v
 
-        #endpoints
-        v[0] = (x[1] - x[0]) / delta
-        v[-1] = (x[-1] - x[-2]) / delta
-        return t, x, v
 
 t, x, v = leapfrog_nonlinear(steps)
+print(f"t = {t}, x = {x}, v = {v}")
 
 # energies
 kin = 0.5 * m * v**2
@@ -105,43 +105,21 @@ def l2_error_norm(t, x):
 # The backend choice here may be platform dependent. You may need to
 # change 'TkAgg' to something else (or omit this line entirely).
 
-plt.switch_backend( 'TkAgg' )
-#plotting
-plt.figure(figsize=(10,6))
-plt.subplot(3,1,1)
-plt.plot(t, x, label="x(t)")
-plt.ylabel("x")
-plt.legend(loc="best")
-plt.grid(True)
+#plt.switch_backend( 'TkAgg' )
 
-plt.subplot(3,1,2)
-plt.plot(t, v, label="v(t)", color='tab:orange')
-plt.ylabel("v")
-plt.legend(loc="best")
-plt.grid(True)
 
-plt.subplot(3,1,3)
-plt.plot(t, kin, label='Kinetic', alpha=0.9)
-plt.plot(t, pot, label='Potential', alpha=0.9)
-plt.plot(t, tot, label='Total', linewidth=1.5, color='k')
-plt.xlabel("t")
-plt.ylabel('Energy')
-plt.legend(loc="best")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
 
 # This loop integrates the SHM equations repeatedly using an increasing
 # number of steps (doubling at each loop iteration).
 n        = 14
 steps    = 8
-l2_error = np.empty( n )
+#l2_error = np.empty( n )
 delta    = np.empty( n )
 
 for i in range(n):
     t, x, v     = leapfrog_nonlinear( steps )
-    delta[i]    = omega*(t[1]-t[0])
-    l2_error[i] = l2_error_norm( t , x )
+    #delta[i]    = omega*(t[1]-t[0])
+    #l2_error[i] = l2_error_norm( t , x )
     plt.plot( t, x, label=f"steps={steps}")
     plt.ylabel("x(t)")
     plt.xlabel("t")
@@ -149,6 +127,7 @@ for i in range(n):
     #plt.show( block=False )
     steps *= 2
 
+plt.show()
 
 #overlaying exact solution on to fig 1
 # t_dense = np.linspace(0, 2.0*cycles*np.pi/omega, 1000)
@@ -163,25 +142,49 @@ for i in range(n):
 
 # Switch to a new plotting window, and plot the L2 error norm,
 # with guidelines for first, second, and third order accuracy.
-plt.figure()
-plt.loglog( delta , l2_error, 'o', label="L2 Error numerical results" )
-plt.loglog( delta , l2_error[0]*(delta/delta[0])**1.0, label='1st order accuracy' )
-plt.loglog( delta , l2_error[0]*(delta/delta[0])**2.0, label='2nd order accuracy' )
-plt.loglog( delta , l2_error[0]*(delta/delta[0])**3.0, label='3rd order accuracy' )
+# plt.figure()
+# plt.loglog( delta , l2_error, 'o', label="L2 Error numerical results" )
+# plt.loglog( delta , l2_error[0]*(delta/delta[0])**1.0, label='1st order accuracy' )
+# plt.loglog( delta , l2_error[0]*(delta/delta[0])**2.0, label='2nd order accuracy' )
+# plt.loglog( delta , l2_error[0]*(delta/delta[0])**3.0, label='3rd order accuracy' )
+#
+# #calculating convergence rate (slope of log.log)
+# fine_region = slice(-5, None) #using smallest dt values for better acuracy
+# fit = np.polyfit(np.log(delta[fine_region]), np.log(l2_error[fine_region]), 1)
+# slope = fit[0]
+#
+# fit_line = np.exp(fit[1]) *delta**slope
+# plt.loglog(delta, fit_line, '--', label=f'Fitted slope = {slope:6f}')
+#
+#
+# plt.xlabel('Δt x ω')
+# plt.ylabel('Relative Error Norm')
+# plt.legend()
+# plt.grid(True)
+# plt.tight_layout()
+#
+# plt.show()
+#plotting special case
+plt.figure(figsize=(10,6))
+plt.subplot(3,1,1)
+plt.plot(t, x, label="x(t)", color='purple')
+plt.ylabel("x")
+plt.legend(loc="best")
+plt.grid(True)
 
-#calculating convergence rate (slope of log.log)
-fine_region = slice(-5, None) #using smallest dt values for better acuracy
-fit = np.polyfit(np.log(delta[fine_region]), np.log(l2_error[fine_region]), 1)
-slope = fit[0]
+plt.subplot(3,1,2)
+plt.plot(t, v, label="v(t)", color='tab:red')
+plt.ylabel("v")
+plt.legend(loc="best")
+plt.grid(True)
 
-fit_line = np.exp(fit[1]) *delta**slope
-plt.loglog(delta, fit_line, '--', label=f'Fitted slope = {slope:6f}')
-
-
-plt.xlabel('Δt x ω')
-plt.ylabel('Relative Error Norm')
-plt.legend()
+plt.subplot(3,1,3)
+plt.plot(t, kin, label='Kinetic', alpha=0.9)
+plt.plot(t, pot, label='Potential', alpha=0.9)
+plt.plot(t, tot, label='Total', linewidth=1.5, color='k')
+plt.xlabel("t")
+plt.ylabel('Energy')
+plt.legend(loc="best")
 plt.grid(True)
 plt.tight_layout()
-
 plt.show()
