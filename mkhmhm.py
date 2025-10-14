@@ -11,7 +11,7 @@ import numpy as np
 
 k      = 1.0 # Spring constant
 m      = 1.0 # Mass
-cycles = 1 # No. of periods to integrate over
+cycles = 2 # No. of periods to integrate over
 x0     = 1.0 # Initial displacement
 v0     = 0.0 # Initial velocity
 alpha = 0.1 #nonlinear spring parameter (alpha = 0 will be for pure SMH)
@@ -21,12 +21,12 @@ omega = (k/m)**0.5
 target_omega_delta = 0.4
 total_time = 2.0 * cycles * np.pi / omega
 delta = target_omega_delta / omega
-steps = int(round(total_time/delta))
+#steps = int(round(total_time/delta))
 #delta = total_time/steps
-print(f"Steps = {steps}, delta = {delta:.6e}, omega*delta = {omega*delta:.6f}")
+#print(f"Steps = {steps}, delta = {delta:.6e}, omega*delta = {omega*delta:.6f}")
 
 def leapfrog_nonlinear(steps):
-    delta = target_omega_delta / omega
+    delta = total_time /steps
     t = np.empty( steps + 1 )
     x = np.empty( steps + 1)
     v = np.empty(steps + 1)
@@ -39,7 +39,7 @@ def leapfrog_nonlinear(steps):
 
     for i in range(steps):
         #advancing position by full step using half-step vel
-        #a = (-k * x[i] - alpha * x[i]**3)/m
+        a = (-k * x[i] - alpha * x[i]**3)/m
         x[i+1] = x[i] + delta * v[i]
         t[i+1] = t[i] + delta
 
@@ -48,18 +48,15 @@ def leapfrog_nonlinear(steps):
         v[i + 1] = v[i] + delta * a_new
 
      # endpoints
-    v[0] = (x[1] - x[0]) / delta
-    v[-1] = (x[-1] - x[-2]) / delta
+    #v[0] = (x[1] - x[0]) / delta
+    #v[-1] = (x[-1] - x[-2]) / delta
     return t, x, v
 
 
-t, x, v = leapfrog_nonlinear(steps)
-print(f"t = {t}, x = {x}, v = {v}")
 
-# energies
-kin = 0.5 * m * v**2
-pot = 0.5 * k * x**2 + 0.25 * alpha * x**4
-tot = kin + pot
+#print(f"t = {t}, x = {x}, v = {v}")
+
+
 
 
 # def leapfrog( steps ):
@@ -89,18 +86,18 @@ tot = kin + pot
 #         v[i + 1] = v[i] + delta * a_new
 #     return t, x, v
 
-def l2_error_norm(t, x):
-    """Calculate the L2 relative error norm."""
-    steps = len( x ) - 1
-    l2_err = 0.0
-    l2     = 0.0
-    l2_ref = 0.0
-    for i in range(len(x)):
-        x_exact = x0*np.cos( omega*t[i] )
-        l2_err += ((x[i] - x_exact)**2.0)
-        l2     += (x[i]**2.0)
-        l2_ref += (x_exact**2.0)
-    return (l2_err/l2)**0.5
+# def l2_error_norm(t, x):
+#     """Calculate the L2 relative error norm."""
+#     steps = len( x ) - 1
+#     l2_err = 0.0
+#     l2     = 0.0
+#     l2_ref = 0.0
+#     for i in range(len(x)):
+#         x_exact = x0*np.cos( omega*t[i] )
+#         l2_err += ((x[i] - x_exact)**2.0)
+#         l2     += (x[i]**2.0)
+#         l2_ref += (x_exact**2.0)
+#     return (l2_err/l2)**0.5
 
 # The backend choice here may be platform dependent. You may need to
 # change 'TkAgg' to something else (or omit this line entirely).
@@ -109,25 +106,6 @@ def l2_error_norm(t, x):
 
 
 
-# This loop integrates the SHM equations repeatedly using an increasing
-# number of steps (doubling at each loop iteration).
-n        = 14
-steps    = 8
-#l2_error = np.empty( n )
-delta    = np.empty( n )
-
-for i in range(n):
-    t, x, v     = leapfrog_nonlinear( steps )
-    #delta[i]    = omega*(t[1]-t[0])
-    #l2_error[i] = l2_error_norm( t , x )
-    plt.plot( t, x, label=f"steps={steps}")
-    plt.ylabel("x(t)")
-    plt.xlabel("t")
-    plt.legend(loc = "best")
-    #plt.show( block=False )
-    steps *= 2
-
-plt.show()
 
 #overlaying exact solution on to fig 1
 # t_dense = np.linspace(0, 2.0*cycles*np.pi/omega, 1000)
@@ -162,8 +140,37 @@ plt.show()
 # plt.legend()
 # plt.grid(True)
 # plt.tight_layout()
-#
 # plt.show()
+
+#plot first z number of points
+point_no = 2000
+
+# This loop integrates the SHM equations repeatedly using an increasing
+# number of steps (doubling at each loop iteration).
+n        = 14
+steps    = 8
+#l2_error = np.empty( n )
+delta    = np.empty( n )
+
+for i in range(0,n):
+    t, x, v     = leapfrog_nonlinear( steps )
+    delta[i]    = omega*(t[1]-t[0])
+    #l2_error[i] = l2_error_norm( t , x )
+    plt.plot( t, x, label=f"steps={steps}")
+    plt.ylabel("x(t)")
+    plt.xlabel("t")
+    plt.legend(loc = "best")
+    #plt.show( block=False )
+    steps *= 2
+
+plt.show()
+
+
+# energies
+kin = 0.5 * m * v**2
+pot = 0.5 * k * x**2 + 0.25 * alpha * x**4
+tot = kin + pot
+
 #plotting special case
 plt.figure(figsize=(10,6))
 plt.subplot(3,1,1)
