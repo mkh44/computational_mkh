@@ -151,9 +151,13 @@ n        = 14
 steps    = 8
 #l2_error = np.empty( n )
 delta    = np.empty( n )
+solutions = []
+time_arrays = []
 
 for i in range(0,n):
     t, x, v     = leapfrog_nonlinear( steps )
+    solutions.append(x)
+    time_arrays.append(t)
     delta[i]    = omega*(t[1]-t[0])
     #l2_error[i] = l2_error_norm( t , x )
     plt.plot( t, x, label=f"steps={steps}")
@@ -165,12 +169,33 @@ for i in range(0,n):
 
 plt.show()
 
+# use the finest time grid as reference (last one)
+t_ref = time_arrays[-1]
+x_ref = solutions[-1]
+
+plt.figure(figsize=(10,6))
+for i in range(len(solutions)-1):
+    t = time_arrays[i]
+    x = solutions[i]
+    x_interp = np.interp(t_ref, t, x)
+    diff = x_interp - x_ref
+    plt.plot(t_ref, diff, label=f"Δx for steps={len(t)-1}")
+
+plt.xlabel("t")
+plt.ylabel("x_difference(t)")
+plt.title("Difference Between Numerical Solutions")
+plt.legend(loc="lower left")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+steps = 8 * 2**(n-1)   # same as last loop iteration
+t, x, v = leapfrog_nonlinear(steps)
 
 # energies
 kin = 0.5 * m * v**2
 pot = 0.5 * k * x**2 + 0.25 * alpha * x**4
 tot = kin + pot
-
 #plotting special case
 plt.figure(figsize=(10,6))
 plt.subplot(3,1,1)
@@ -195,3 +220,6 @@ plt.legend(loc="best")
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+
+
